@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, Button, TextInput } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const data = [
   { id: "1", image: require("../assets/Logo.png") },
@@ -17,18 +18,27 @@ export default function Header() {
     console.log("submit pressed");
   };
 
+  const handleCompleteOnboarding = async () => {
+    try {
+      // Update AsyncStorage value to indicate that onboarding is completed
+      await AsyncStorage.setItem("onboardingCompleted", "true");
+      console.log("Onboarding completed.");
+    } catch (error) {
+      console.log("Error updating AsyncStorage:", error);
+    }
+  };
 
   const validateEmail = () => {
-    if(!emailText.trim()) {
-        return true
+    if (!emailText.trim()) {
+      return true;
     }
 
-    if(!emailRegex.test(emailText)) {
-        return true
+    if (!emailRegex.test(emailText)) {
+      return true;
     }
 
-    return false
-  }
+    return false;
+  };
   return (
     <View style={styles.container}>
       <View>
@@ -36,31 +46,31 @@ export default function Header() {
       </View>
       <View style={styles.bottomContainer}>
         <Text style={styles.title}>Lets get to know you</Text>
-            <View style={styles.textFields}>
-                <Text style={styles.text}>First Name</Text>
+        <View style={styles.textFields}>
+          <Text style={styles.text}>First Name</Text>
 
-                <TextInput style={styles.input}
-                    placeholder="Enter First Name"
-                    value= {firstNameText}
-                    onChangeText={ setFirstNameText }
-                />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter First Name"
+            value={firstNameText}
+            onChangeText={setFirstNameText}
+          />
 
-                <Text style={styles.text}>Email</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter Email"
-                value={emailText}
-                onChangeText={setEmailText}
-            />
-            </View>
-
+          <Text style={styles.text}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Email"
+            value={emailText}
+            onChangeText={setEmailText}
+          />
+        </View>
       </View>
       <View style={styles.submitButton}>
         <Button
-            title="Next"
-            onPress={handlePress}
-            color={'black'}
-            disabled={(firstNameText.length === 0) || (validateEmail())}
+          title="Next"
+          onPress={handleCompleteOnboarding}
+          color={"black"}
+          disabled={firstNameText.length === 0 || validateEmail()}
         />
       </View>
     </View>
@@ -123,10 +133,10 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    alignSelf: 'center',
+    alignSelf: "center",
     paddingBottom: 10,
     fontSize: 26,
-    fontWeight: '600'
+    fontWeight: "600",
   },
 
   submitButton: {
@@ -136,6 +146,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginEnd: 20,
     marginTop: 20,
-    color: 'black',
+    color: "black",
   },
 });
