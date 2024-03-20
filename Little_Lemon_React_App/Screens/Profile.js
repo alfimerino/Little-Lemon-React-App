@@ -13,6 +13,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CheckBox } from "react-native-elements";
+import * as ImagePicker from "expo-image-picker";
+import { color } from "react-native-elements/dist/helpers";
 
 export default function Profile() {
   const [firstName, setFirstName] = useState("");
@@ -20,6 +22,7 @@ export default function Profile() {
   const [email, setEmailText] = useState("");
   const [phone, setPhoneText] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [image, setImage] = useState(null);
 
   const data = [];
 
@@ -45,6 +48,22 @@ export default function Profile() {
 
   const setPhone = (value) => {
     setPhoneText(value);
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
 
   const getUserData = async () => {
@@ -81,11 +100,21 @@ export default function Profile() {
       <View style={styles.item}>
         <InputTitleText text={"Avatar"} />
         <View style={styles.avatarRow}>
-          <ImageButton
-            onPress={console.log("pressed")}
-            imageSource={require("../assets/Profile.png")} // Adjust the path to your image file
-            imageStyle={styles.customImageStyle} // Add custom styles to the image if needed
-          />
+          <View
+            style={{ flex: 1, alignItems: "flex-start", justifyContent: "center" }}
+          >
+            <TouchableOpacity onPress={pickImage} style={styles.button}>
+              {image ? (
+                <Image source={{ uri: image }} style={[styles.image]} />
+              ) : (
+                <View style={{}}>
+                  <Text style={{ color: "white", fontSize: 24 }}>
+                    {firstName ? firstName.charAt(0) : "JD"}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
           <View style={styles.greenButton}>
             <Button
               title="Change"
@@ -280,5 +309,22 @@ const styles = StyleSheet.create({
   yellowButton: {
     width: 110,
     height: 40,
+  },
+
+  placeholderImage: {
+    width: 200,
+    height: 200,
+    marginTop: 20,
+    backgroundColor: "#CCCCCC",
+  },
+
+  button: {
+    width: 60, // Adjust image size as needed
+    height: 60, // Adjust image size as needed
+    resizeMode: "contain",
+    backgroundColor: "green",
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
