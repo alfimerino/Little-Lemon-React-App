@@ -21,6 +21,8 @@ export default function Profile() {
   const [phone, setPhoneText] = useState("");
   const [isChecked, setIsChecked] = useState(false);
 
+  const data = [];
+
   const onPress = () => {
     console.log("tapped");
   };
@@ -58,244 +60,125 @@ export default function Profile() {
     }
   };
 
+  const ImageButton = ({ onPress, imageSource, imageStyle }) => {
+    return (
+      <TouchableOpacity onPress={onPress} style={styles.button}>
+        <Image source={imageSource} style={[styles.buttonImage, imageStyle]} />
+      </TouchableOpacity>
+    );
+  };
+
   useEffect(() => {
     getUserData();
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      {/* Wrap each item in TouchableOpacity with padding */}
+    <View>
       <View style={styles.item}>
         <Header />
       </View>
-      <TouchableOpacity onPress={() => {}} style={styles.touchableRow}>
-        <Text style={styles.title}>Personal Information</Text>
-        <View style={styles.item}>
-          <InputTitleText text={"First Name"} />
-          <TextInput
-            style={styles.input}
-            onChangeText={setFirst}
-            value={firstName}
+      <Text style={styles.title}>Personal Information</Text>
+      <View style={styles.item}>
+        <InputTitleText text={"Avatar"} />
+        <View style={styles.avatarRow}>
+          <ImageButton
+            onPress={console.log("pressed")}
+            imageSource={require("../assets/Profile.png")} // Adjust the path to your image file
+            imageStyle={styles.customImageStyle} // Add custom styles to the image if needed
+          />
+          <View style={styles.greenButton}>
+            <Button
+              title="Change"
+              onPress={console.log("tapped")}
+              color={"#394C45"}
+            />
+          </View>
+          <View style={styles.greenButton}>
+            <Button
+              title="Remove"
+              onPress={console.log("tapped")}
+              color={"gray"}
+            />
+          </View>
+        </View>
+        <InputTitleText text={"First Name"} />
+        <TextInput
+          style={styles.input}
+          onChangeText={setFirst}
+          value={firstName}
+        />
+      </View>
+      <View style={styles.item}>
+        <InputTitleText text={"Last Name"} />
+        <TextInput
+          style={styles.input}
+          onChangeText={setLast}
+          value={lastName}
+        />
+      </View>
+      <View style={styles.item}>
+        <InputTitleText text={"Email"} />
+        <TextInput style={styles.input} onChangeText={setEmail} value={email} />
+      </View>
+      <View style={styles.item}>
+        <CheckBox
+          title="Password Changes"
+          checked={isChecked}
+          onPress={toggleCheckBox}
+          checkedColor="green"
+          backgroundColor="white"
+        />
+      </View>
+      <View style={styles.item}>
+        <CheckBox
+          title="Order Statuses"
+          checked={isChecked}
+          onPress={toggleCheckBox}
+          checkedColor="green"
+          backgroundColor="white"
+        />
+      </View>
+      <View style={styles.item}>
+        <CheckBox
+          title="Special Offers"
+          checked={isChecked}
+          onPress={toggleCheckBox}
+          checkedColor="green"
+          backgroundColor="white"
+        />
+      </View>
+      <View style={styles.item}>
+        <CheckBox
+          title="Newsletter"
+          checked={isChecked}
+          onPress={toggleCheckBox}
+          checkedColor="green"
+          backgroundColor="white"
+        />
+        <Button
+          title="Log out"
+          onPress={console.log("tapped")}
+          style={styles.yellowButton}
+          color={"#F1C613"}
+        />
+      </View>
+      <View style={styles.avatarRow}>
+        <View style={styles.greenButton}>
+          <Button
+            title="Change"
+            onPress={console.log("tapped")}
+            color={"#394C45"}
           />
         </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 2 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-        <InputTitleText text={"Last Name"} />
-            <TextInput
-              style={styles.input}
-              onChangeText={setLast}
-              value={lastName}
-            />
+        <View style={styles.greenButton}>
+          <Button
+            title="Remove"
+            onPress={console.log("tapped")}
+            color={"gray"}
+          />
         </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 3 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-        <InputTitleText text={"Email"} />
-            <TextInput
-              style={styles.input}
-              onChangeText={setEmail}
-              value={email}
-            />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 1 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-        <CheckBox
-              title="Password Changes"
-              checked={isChecked}
-              onPress={toggleCheckBox}
-              checkedColor="green"
-              backgroundColor="white"
-            />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 2 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-        <CheckBox
-              title="Order Statuses"
-              checked={isChecked}
-              onPress={toggleCheckBox}
-              checkedColor="green"
-              backgroundColor="white"
-            />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 3 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-        <CheckBox
-              title="Special Offers"
-              checked={isChecked}
-              onPress={toggleCheckBox}
-              checkedColor="green"
-              backgroundColor="white"
-            />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 1 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-        <CheckBox
-              title="Newsletter"
-              checked={isChecked}
-              onPress={toggleCheckBox}
-              checkedColor="green"
-              backgroundColor="white"
-            />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 2 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-          <Text>Item 2</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 3 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-          <Text>Item 3</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 1 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-          <Text>Item 1</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 2 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-          <Text>Item 2</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 3 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-          <Text>Item 3</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 1 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-          <Text>Item 1</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 2 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-          <Text>Item 2</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => console.log("Row 3 clicked")}
-        style={styles.touchableRow}
-      >
-        <View style={styles.item}>
-          <Text>Item 3</Text>
-        </View>
-      </TouchableOpacity>
-      {/* Add more items as needed */}
-    </ScrollView>
-    // <View>
-    //   <View style={styles.container}>
-    // <View style={styles.item}>
-    //   <Header />
-    // </View>
-    //   </View>
-    //   <ScrollView contentContainerStyle={styles.scrollViewContent}>
-    //     <View style={styles.container}>
-    // <View style={styles.item}>
-    //   <Text style={styles.title}>Personal Information</Text>
-    //   <InputTitleText text={"First Name"} />
-    //   <TextInput
-    //     style={styles.input}
-    //     onChangeText={setFirst}
-    //     value={firstName}
-    //   />
-            // <InputTitleText text={"Last Name"} />
-            // <TextInput
-            //   style={styles.input}
-            //   onChangeText={setLast}
-            //   value={lastName}
-            // />
-
-            // <InputTitleText text={"Email"} />
-            // <TextInput
-            //   style={styles.input}
-            //   onChangeText={setEmail}
-            //   value={email}
-            // />
-
-    //         <InputTitleText text={"Phone Number"} />
-    //         <TextInput
-    //           style={styles.input}
-    //           onChangeText={setPhone}
-    //           value={phone}
-    //         />
-    //         <Text style={styles.title}>Email Notifications</Text>
-            // <CheckBox
-            //   title="Order Statuses"
-            //   checked={isChecked}
-            //   onPress={toggleCheckBox}
-            //   checkedColor="green"
-            //   backgroundColor="white"
-            // />
-            // <CheckBox
-            //   title="Password Changes"
-            //   checked={isChecked}
-            //   onPress={toggleCheckBox}
-            //   checkedColor="green"
-            //   backgroundColor="white"
-            // />
-            // <CheckBox
-            //   title="Special Offers"
-            //   checked={isChecked}
-            //   onPress={toggleCheckBox}
-            //   checkedColor="green"
-            //   backgroundColor="white"
-            // />
-            // <CheckBox
-            //   title="Newsletter"
-            //   checked={isChecked}
-            //   onPress={toggleCheckBox}
-            //   checkedColor="green"
-            //   backgroundColor="white"
-            // />
-    //       </View>
-    //     </View>
-    //   </ScrollView>
-    // </View>
+      </View>
+    </View>
   );
 }
 
@@ -325,6 +208,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingLeft: 8,
     fontWeight: "bold",
+    backgroundColor: "white",
   },
 
   textInput: {
@@ -339,12 +223,16 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "gray",
     borderWidth: 1,
-    marginBottom: 10,
-    marginTop: 10,
+    // marginBottom: 2,
+    // marginTop: 2,
     width: 200,
     paddingHorizontal: 10,
     marginStart: 8,
     borderRadius: 8,
+  },
+
+  avatarRow: {
+    flexDirection: "row",
   },
 
   container: {
@@ -371,5 +259,26 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     justifyContent: "top",
     backgroundColor: "white",
+  },
+
+  buttonImage: {
+    width: 60, // Adjust image size as needed
+    height: 60, // Adjust image size as needed
+    resizeMode: "contain",
+  },
+
+  greenButton: {
+    width: 100,
+    height: 40,
+    backgroundColor: "white",
+    borderRadius: 8,
+    justifyContent: "center",
+    marginLeft: 12,
+    marginTop: 8,
+  },
+
+  yellowButton: {
+    width: 110,
+    height: 40,
   },
 });
