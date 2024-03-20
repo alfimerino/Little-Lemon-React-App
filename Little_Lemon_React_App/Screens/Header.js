@@ -66,7 +66,7 @@ const BUTTON_SIZE = 60;
 const styles = StyleSheet.create({
   image: {
     width: 200,
-    height: 100,
+    height: 70,
     resizeMode: "contain",
     marginRight: 40,
   },
