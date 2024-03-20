@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const data = [
   { id: "1", image: require("../assets/Logo.png") },
@@ -22,8 +23,20 @@ const ImageButton = ({ onPress, imageSource, imageStyle }) => {
   );
 };
 
+const IconButton = ({ onPress }) => {
+  return (
+    <TouchableOpacity onPress={onPress} >
+      <Ionicons name="arrow-back-circle" size={40} color="green" />
+    </TouchableOpacity>
+  );
+};
+
 const renderItem = ({ item }) => (
   <View style={styles.imageButtonContainer}>
+    <View style={styles.backButton}>
+      <IconButton />
+    </View>
+
     <Image source={require("../assets/Logo.png")} style={styles.image} />
     <ImageButton
       onPress={console.log("pressed")}
@@ -81,7 +94,6 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Arrange children horizontally
     alignItems: "center",
     justifyContent: "flex-end",
-
   },
   listContainer: {
     flexDirection: "row",
@@ -92,5 +104,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "top",
+  },
+
+  backButton: {
+    alignItems: "center",
+    // resizeMode: "cover",
+    justifyContent: "flex-start",
+    marginRight: 50,
+    // height: 100,
   },
 });

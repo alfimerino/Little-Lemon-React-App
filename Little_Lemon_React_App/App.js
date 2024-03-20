@@ -45,17 +45,6 @@ export default function App() {
         <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
-
-    // <NavigationContainer>
-    //   <Stack.Navigator>
-    //     {state.isOnboardingCompleted ? (
-
-    // 			<Stack.Screen name="Profile" component={Profile} />
-    //     ) : (
-    // 			<Stack.Screen name="Onboarding" component={Onboarding} />
-    //     )}
-    //   </Stack.Navigator>
-    // </NavigationContainer>
   );
 }
 

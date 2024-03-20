@@ -30,6 +30,30 @@ export default function Profile() {
     setPhoneText(value);
   };
 
+  const getUserData = async () => {
+    try {
+      const firstNameText = await AsyncStorage.getItem(
+        "firstName"
+      );
+      setFirstName(firstNameText)
+      const lastNameText = await AsyncStorage.getItem(
+        "lastName"
+      );
+      setLastName(lastNameText)
+      const emailText = await AsyncStorage.getItem(
+        "email"
+      );
+      setEmail(emailText)
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserData()
+
+  }, []);
 
   return (
     <View>

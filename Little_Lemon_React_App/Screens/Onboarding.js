@@ -12,6 +12,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Header() {
   const [firstNameText, setFirstNameText] = useState("");
+  const [lastName, setLastNameText] = useState("");
   const [emailText, setEmailText] = useState("");
   const handlePress = () => {
     // Handle button press here
@@ -21,6 +22,9 @@ export default function Header() {
   const handleCompleteOnboarding = async () => {
     try {
       // Update AsyncStorage value to indicate that onboarding is completed
+      await AsyncStorage.setItem("firstName", { firstNameText });
+      await AsyncStorage.setItem("lastName", { lastName });
+      await AsyncStorage.setItem("email", { emailText });
       await AsyncStorage.setItem("onboardingCompleted", "true");
       console.log("Onboarding completed.");
     } catch (error) {
@@ -56,6 +60,13 @@ export default function Header() {
             onChangeText={setFirstNameText}
           />
 
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Last Name"
+            value={lastName}
+            onChangeText={setLastNameText}
+          />
+
           <Text style={styles.text}>Email</Text>
           <TextInput
             style={styles.input}
@@ -70,7 +81,7 @@ export default function Header() {
           title="Next"
           onPress={handleCompleteOnboarding}
           color={"black"}
-          disabled={firstNameText.length === 0 || validateEmail()}
+          disabled={firstNameText.length === 0 || lastName.length === 0 || validateEmail()}
         />
       </View>
     </View>
