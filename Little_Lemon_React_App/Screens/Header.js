@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 100,
     resizeMode: "contain",
-    marginRight: 40
+    marginRight: 40,
   },
 
   buttonImage: {
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Arrange children horizontally
     alignItems: "center",
     justifyContent: "flex-end",
+
   },
   listContainer: {
     flexDirection: "row",

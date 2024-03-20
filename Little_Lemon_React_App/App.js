@@ -28,10 +28,8 @@ export default function App() {
       );
       if (onboardingCompleted === "true") {
         setState({ isLoading: false, isOnboardingCompleted: true });
-				console.log('true this')
       } else {
         setState({ isLoading: false, isOnboardingCompleted: false });
-				console.log('false this')
       }
     } catch (error) {
       console.log(error);
@@ -39,19 +37,25 @@ export default function App() {
   };
 
   if (state.isLoading) {
-    console.log('Loading')
+    console.log("Loading");
   }
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {state.isOnboardingCompleted ? (
-
-					<Stack.Screen name="Profile" component={Profile} />
-        ) : (
-					<Stack.Screen name="Onboarding" component={Onboarding} />
-        )}
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
+
+    // <NavigationContainer>
+    //   <Stack.Navigator>
+    //     {state.isOnboardingCompleted ? (
+
+    // 			<Stack.Screen name="Profile" component={Profile} />
+    //     ) : (
+    // 			<Stack.Screen name="Onboarding" component={Onboarding} />
+    //     )}
+    //   </Stack.Navigator>
+    // </NavigationContainer>
   );
 }
 
