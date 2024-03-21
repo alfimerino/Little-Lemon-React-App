@@ -27,13 +27,6 @@ export default function Profile() {
   const [newsLetterCheck, setnewsLetterCheck] = useState(false);
   const [specialOfferCheck, setSpecialOfferCheck] = useState(false);
   const [image, setImage] = useState(null);
-  const uriFinal = "";
-
-  const data = [];
-
-  const onPress = () => {
-    console.log("tapped");
-  };
 
   const removeImage = async () => {
     try {
@@ -53,40 +46,32 @@ export default function Profile() {
       await AsyncStorage.setItem("onboardingCompleted", "false");
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const handleChangeData = async () => {
-    try {
-      // Update AsyncStorage value to indicate that onboarding is completed
-      await AsyncStorage.setItem("firstName", JSON.stringify({ firstName }));
-      await AsyncStorage.setItem("lastName", JSON.stringify({ lastName }));
-      await AsyncStorage.setItem("email", JSON.stringify({ email }));
-      await AsyncStorage.setItem("onboardingCompleted", "true");
-      console.log("Onboarding completed.");
-    } catch (error) {
-      console.log("Error updating AsyncStorage:", error);
+    } finally {
+      setLast("");
+      setFirst("");
+      setEmail("");
+      setPhone("");
     }
   };
 
   const toggleCheckBox = () => {
-    setIsChecked(!isChecked);
+    setIsChecked(isChecked);
   };
 
   const togglePassword = () => {
-    setPasswordCheck(!passwordCheck);
+    setPasswordCheck(passwordCheck);
   };
 
   const toggleNewsletter = () => {
-    setnewsLetterCheck(!newsLetterCheck);
+    setnewsLetterCheck(newsLetterCheck);
   };
 
   const toggleOrderStatus = () => {
-    setOrderCheck(!orderCheck);
+    setOrderCheck(orderCheck);
   };
 
   const toggleSpecialOffers = () => {
-    setSpecialOfferCheck(!specialOfferCheck);
+    setSpecialOfferCheck(specialOfferCheck);
   };
 
   const setFirst = (value) => {
@@ -103,6 +88,10 @@ export default function Profile() {
 
   const setPhone = (value) => {
     setPhoneText(value);
+  };
+
+  const InputTitleText = ({ text }) => {
+    return <Text style={styles.textInput}>{text}</Text>;
   };
 
   const saveAllChanges = async () => {
@@ -125,6 +114,15 @@ export default function Profile() {
       );
     } catch (error) {
       console.log(error);
+    } finally {
+      setFirst(firstName);
+      setLast(lastName);
+      setEmail(email);
+      setPhone(phone);
+      setPasswordCheck(passwordCheck);
+      setOrderCheck(orderCheck);
+      setSpecialOfferCheck(specialOfferCheck);
+      setnewsLetterCheck(newsLetterCheck);
     }
   };
 
@@ -137,8 +135,6 @@ export default function Profile() {
         quality: 1,
       });
 
-      console.log(result.assets[0].uri);
-
       if (!result.canceled) {
         setImage(result.assets[0].uri);
         uri = result.assets[0].uri;
@@ -148,30 +144,20 @@ export default function Profile() {
     } finally {
       const ur = JSON.stringify(uri);
       saveImageToStorage(ur);
-      console.log("this is the image" + ur);
     }
   };
 
   const saveImageToStorage = async (imageURL) => {
-    console.log("ok oooooo" + imageURL);
     try {
       await AsyncStorage.setItem("avatarImage", imageURL);
-      console.log("saved image ok ok");
     } catch (error) {
       console.log(error);
     }
   };
 
-  function validatePhoneNumber(phoneNumber) {
-    const phoneRegex =
-      /^(?:\+?1[-.\s]?)?(?:\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$/;
-    return phoneRegex.test(phoneNumber);
-  }
-
   const getUserData = async () => {
     try {
       const firstNameText = await AsyncStorage.getItem("firstName");
-      console.log("this is the first name" + firstNameText);
       let parsedFirst = JSON.parse(firstNameText);
       setFirstName(parsedFirst.firstName);
 
@@ -189,7 +175,6 @@ export default function Profile() {
 
       const passwordCheckS = await AsyncStorage.getItem("passwordCheck");
       setPasswordCheck(JSON.parse(passwordCheckS));
-      console.log(passwordCheck);
 
       const orderCheckS = await AsyncStorage.getItem("orderCheck");
       setOrderCheck(JSON.parse(orderCheckS));
@@ -262,31 +247,29 @@ export default function Profile() {
         </View>
       </View>
 
+      <View style={styles.avatarRow}>
+        <View>
+          <View style={styles.item}>
+            <InputTitleText text={"Email"} />
+            <TextInput
+              style={styles.input}
+              onChangeText={setEmail}
+              value={email}
+            />
+          </View>
+        </View>
 
-<View style={styles.avatarRow}>
-<View>
-        <View style={styles.item}>
-          <InputTitleText text={"Email"} />
-          <TextInput
-            style={styles.input}
-            onChangeText={setEmail}
-            value={email}
-          />
+        <View>
+          <View style={styles.item}>
+            <InputTitleText text={"Phone Number"} />
+            <TextInput
+              style={styles.input}
+              onChangeText={setEmail}
+              value={email}
+            />
+          </View>
         </View>
       </View>
-
-      <View>
-        <View style={styles.item}>
-          <InputTitleText text={"Phone Number"} />
-          <TextInput
-            style={styles.input}
-            onChangeText={setEmail}
-            value={email}
-          />
-        </View>
-      </View>
-</View>
-
 
       <View style={styles.item}>
         <CheckBox
@@ -325,34 +308,26 @@ export default function Profile() {
         />
         <Button
           title="Log out"
-          onPress={console.log("tapped")}
+          onPress={removeAll}
           style={styles.yellowButton}
           color={"#F1C613"}
         />
       </View>
       <View style={styles.avatarRow}>
         <View style={styles.greenButton}>
-          <Button
-            title="Save"
-            onPress={console.log("tapped")}
-            color={"#394C45"}
-          />
+          <Button title="Save" onPress={saveAllChanges} color={"#394C45"} />
         </View>
         <View style={styles.greenButton}>
-          <Button
-            title="Remove"
-            onPress={console.log("tapped")}
-            color={"gray"}
-          />
+          <Button title="Remove" onPress={removeAll} color={"gray"} />
         </View>
       </View>
     </View>
   );
 }
 
-const InputTitleText = ({ text }) => {
-  return <Text style={styles.textInput}>{text}</Text>;
-};
+/*
+Styles Section - You went too far
+*/
 
 const styles = StyleSheet.create({
   title: {
@@ -382,7 +357,7 @@ const styles = StyleSheet.create({
 
   avatarRow: {
     flexDirection: "row",
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginBottom: 10,
   },
 
