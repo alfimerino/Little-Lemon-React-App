@@ -20,7 +20,7 @@ export default function Header() {
   };
 
   const handleCompleteOnboarding = async () => {
-    setFirstNameText(firstNameText)
+    // setFirstNameText(firstNameText)
     try {
       // Update AsyncStorage value to indicate that onboarding is completed
       await AsyncStorage.setItem("firstName", JSON.stringify({ firstNameText }));

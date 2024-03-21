@@ -31,6 +31,27 @@ export default function Profile() {
     console.log("tapped");
   };
 
+  const removeImage = async () => {
+    try {
+      await AsyncStorage.removeItem("avatarImage");
+    } catch (error) {
+      console.log(error)
+    }
+    setImage(null)
+  }
+
+  const removeAll = async () => {
+    try {
+      await AsyncStorage.removeItem("avatarImage");
+      await AsyncStorage.removeItem("firstName");
+      await AsyncStorage.removeItem("lastName");
+      await AsyncStorage.removeItem("email");
+      await AsyncStorage.setItem("onboardingCompleted", "false");
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleChangeData = async () => {
     try {
       // Update AsyncStorage value to indicate that onboarding is completed
@@ -66,7 +87,6 @@ export default function Profile() {
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    var uri = ''
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -106,19 +126,22 @@ export default function Profile() {
   const getUserData = async () => {
     try {
       const firstNameText = await AsyncStorage.getItem("firstName");
+      console.log('this is the first name' + firstNameText)
       let parsedFirst = JSON.parse(firstNameText);
-      setFirstName(parsedFirst.firstNameText);
+      setFirstName(parsedFirst.firstName);
+
       const lastNameText = await AsyncStorage.getItem("lastName");
       let parsedLast = JSON.parse(lastNameText);
       setLastName(parsedLast.lastName);
+
       const emailText = await AsyncStorage.getItem("email");
       let parsedEmail = JSON.parse(emailText);
       setEmail(parsedEmail.emailText);
+
       const imageUR = await AsyncStorage.getItem('avatarImage');
-      console.log('getting image this thing ' + imageUR)
       let parsedImage = JSON.parse(imageUR)
       setImage(parsedImage)
-      console.log('finally this is the image in hook' + image)
+
     } catch (error) {
       console.log(error);
     }
@@ -148,15 +171,19 @@ export default function Profile() {
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center", }}
           >
-            {image && (
+            {image ? (
               <View style={{ alignItems: "center", justifyContent: "center" }}>
                 <Image
                   source={{ uri: image }}
                   style={{ width: 80, height: 80, borderRadius: 40  }}
                 />
               </View>
+            ): (
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                {/* Placeholder view */}
+                <Text>No Image</Text>
+              </View>
             )}
-            {/* <Button title="Pick an image from gallery" onPress={pickImage} /> */}
           </View>
           <View style={styles.greenButton}>
             <Button
@@ -168,7 +195,7 @@ export default function Profile() {
           <View style={styles.greenButton}>
             <Button
               title="Remove"
-              onPress={console.log("tapped")}
+              onPress={removeImage}
               color={"gray"}
             />
           </View>
