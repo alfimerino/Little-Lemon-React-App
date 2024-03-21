@@ -66,20 +66,42 @@ export default function Profile() {
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    var uri = ''
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    console.log(result.assets[0].uri);
+      console.log(result.assets[0].uri);
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+        uri = result.assets[0].uri
 
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      const ur = JSON.stringify(uri)
+      saveImageToStorage(ur)
+      console.log('this is the image' + ur)
     }
+
+
   };
+
+  const saveImageToStorage = async (imageURL) => {
+    console.log('ok oooooo' + imageURL)
+    try {
+      await AsyncStorage.setItem("avatarImage", imageURL)
+      console.log('saved image ok ok')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const getUserData = async () => {
     try {
@@ -92,6 +114,11 @@ export default function Profile() {
       const emailText = await AsyncStorage.getItem("email");
       let parsedEmail = JSON.parse(emailText);
       setEmail(parsedEmail.emailText);
+      const imageUR = await AsyncStorage.getItem('avatarImage');
+      console.log('getting image this thing ' + imageUR)
+      let parsedImage = JSON.parse(imageUR)
+      setImage(parsedImage)
+      console.log('finally this is the image in hook' + image)
     } catch (error) {
       console.log(error);
     }
