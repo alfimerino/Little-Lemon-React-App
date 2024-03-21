@@ -23,6 +23,7 @@ export default function Profile() {
   const [phone, setPhoneText] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [image, setImage] = useState(null);
+  const uriFinal = ""
 
   const data = [];
 
@@ -66,29 +67,30 @@ export default function Profile() {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
 
-    console.log(result);
+    console.log(result.assets[0].uri);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+
     }
   };
 
   const getUserData = async () => {
     try {
       const firstNameText = await AsyncStorage.getItem("firstName");
-      let parsedFirst = JSON.parse(firstNameText)
+      let parsedFirst = JSON.parse(firstNameText);
       setFirstName(parsedFirst.firstNameText);
       const lastNameText = await AsyncStorage.getItem("lastName");
-      let parsedLast = JSON.parse(lastNameText)
+      let parsedLast = JSON.parse(lastNameText);
       setLastName(parsedLast.lastName);
       const emailText = await AsyncStorage.getItem("email");
-      let parsedEmail = JSON.parse(emailText)
+      let parsedEmail = JSON.parse(emailText);
       setEmail(parsedEmail.emailText);
     } catch (error) {
       console.log(error);
@@ -116,23 +118,23 @@ export default function Profile() {
       <View style={styles.item}>
         <InputTitleText text={"Avatar"} />
         <View style={styles.avatarRow}>
-          <View>
-            <TouchableOpacity onPress={pickImage} style={styles.button}>
-              {image ? (
-                <Image source={{ uri: image }} style={[styles.image]} />
-              ) : (
-                <View style={{}}>
-                  <Text style={{ color: "white", fontSize: 24}}>
-                    {firstName ? firstName.charAt(0) + lastName.charAt(0) : "LL"}
-                  </Text>
-                </View>
-              )}
-            </TouchableOpacity>
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center", }}
+          >
+            {image && (
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: 80, height: 80, borderRadius: 40  }}
+                />
+              </View>
+            )}
+            {/* <Button title="Pick an image from gallery" onPress={pickImage} /> */}
           </View>
           <View style={styles.greenButton}>
             <Button
               title="Change"
-              onPress={handleChangeData}
+              onPress={pickImage}
               color={"#394C45"}
             />
           </View>
@@ -316,9 +318,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
 
-  changeButton: {
-
-  },
+  changeButton: {},
 
   yellowButton: {
     width: 110,
