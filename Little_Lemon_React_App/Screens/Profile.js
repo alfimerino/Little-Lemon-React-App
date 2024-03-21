@@ -30,6 +30,19 @@ export default function Profile() {
     console.log("tapped");
   };
 
+  const handleChangeData = async () => {
+    try {
+      // Update AsyncStorage value to indicate that onboarding is completed
+      await AsyncStorage.setItem("firstName", JSON.stringify({ firstName }));
+      await AsyncStorage.setItem("lastName", JSON.stringify({ lastName }));
+      await AsyncStorage.setItem("email", JSON.stringify({ email }));
+      await AsyncStorage.setItem("onboardingCompleted", "true");
+      console.log("Onboarding completed.");
+    } catch (error) {
+      console.log("Error updating AsyncStorage:", error);
+    }
+  };
+
   const toggleCheckBox = () => {
     setIsChecked(!isChecked);
   };
@@ -69,11 +82,14 @@ export default function Profile() {
   const getUserData = async () => {
     try {
       const firstNameText = await AsyncStorage.getItem("firstName");
-      setFirstName(firstNameText);
+      let parsedFirst = JSON.parse(firstNameText)
+      setFirstName(parsedFirst.firstNameText);
       const lastNameText = await AsyncStorage.getItem("lastName");
-      setLastName(lastNameText);
+      let parsedLast = JSON.parse(lastNameText)
+      setLastName(parsedLast.lastName);
       const emailText = await AsyncStorage.getItem("email");
-      setEmail(emailText);
+      let parsedEmail = JSON.parse(emailText)
+      setEmail(parsedEmail.emailText);
     } catch (error) {
       console.log(error);
     }
@@ -100,16 +116,14 @@ export default function Profile() {
       <View style={styles.item}>
         <InputTitleText text={"Avatar"} />
         <View style={styles.avatarRow}>
-          <View
-            style={{ flex: 1, alignItems: "flex-start", justifyContent: "center" }}
-          >
+          <View>
             <TouchableOpacity onPress={pickImage} style={styles.button}>
               {image ? (
                 <Image source={{ uri: image }} style={[styles.image]} />
               ) : (
                 <View style={{}}>
-                  <Text style={{ color: "white", fontSize: 24 }}>
-                    {firstName ? firstName.charAt(0) : "JD"}
+                  <Text style={{ color: "white", fontSize: 24}}>
+                    {firstName ? firstName.charAt(0) + lastName.charAt(0) : "LL"}
                   </Text>
                 </View>
               )}
@@ -118,7 +132,7 @@ export default function Profile() {
           <View style={styles.greenButton}>
             <Button
               title="Change"
-              onPress={console.log("tapped")}
+              onPress={handleChangeData}
               color={"#394C45"}
             />
           </View>
@@ -252,8 +266,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "gray",
     borderWidth: 1,
-    // marginBottom: 2,
-    // marginTop: 2,
     width: 200,
     paddingHorizontal: 10,
     marginStart: 8,
@@ -299,11 +311,13 @@ const styles = StyleSheet.create({
   greenButton: {
     width: 100,
     height: 40,
-    backgroundColor: "white",
-    borderRadius: 8,
     justifyContent: "center",
-    marginLeft: 12,
     marginTop: 8,
+    marginHorizontal: 10,
+  },
+
+  changeButton: {
+
   },
 
   yellowButton: {

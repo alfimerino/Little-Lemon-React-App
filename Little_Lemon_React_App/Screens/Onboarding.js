@@ -20,11 +20,12 @@ export default function Header() {
   };
 
   const handleCompleteOnboarding = async () => {
+    setFirstNameText(firstNameText)
     try {
       // Update AsyncStorage value to indicate that onboarding is completed
-      await AsyncStorage.setItem("firstName", { firstNameText });
-      await AsyncStorage.setItem("lastName", { lastName });
-      await AsyncStorage.setItem("email", { emailText });
+      await AsyncStorage.setItem("firstName", JSON.stringify({ firstNameText }));
+      await AsyncStorage.setItem("lastName", JSON.stringify({ lastName }));
+      await AsyncStorage.setItem("email", JSON.stringify({ emailText }));
       await AsyncStorage.setItem("onboardingCompleted", "true");
       console.log("Onboarding completed.");
     } catch (error) {
@@ -55,6 +56,7 @@ export default function Header() {
 
           <TextInput
             style={styles.input}
+            type='text'
             placeholder="Enter First Name"
             value={firstNameText}
             onChangeText={setFirstNameText}
@@ -81,7 +83,11 @@ export default function Header() {
           title="Next"
           onPress={handleCompleteOnboarding}
           color={"black"}
-          disabled={firstNameText.length === 0 || lastName.length === 0 || validateEmail()}
+          disabled={
+            firstNameText.length === 0 ||
+            lastName.length === 0 ||
+            validateEmail()
+          }
         />
       </View>
     </View>
