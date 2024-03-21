@@ -22,8 +22,12 @@ export default function Profile() {
   const [email, setEmailText] = useState("");
   const [phone, setPhoneText] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [passwordCheck, setPasswordCheck] = useState(false);
+  const [orderCheck, setOrderCheck] = useState(false);
+  const [newsLetterCheck, setnewsLetterCheck] = useState(false);
+  const [specialOfferCheck, setSpecialOfferCheck] = useState(false);
   const [image, setImage] = useState(null);
-  const uriFinal = ""
+  const uriFinal = "";
 
   const data = [];
 
@@ -35,10 +39,10 @@ export default function Profile() {
     try {
       await AsyncStorage.removeItem("avatarImage");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-    setImage(null)
-  }
+    setImage(null);
+  };
 
   const removeAll = async () => {
     try {
@@ -48,9 +52,9 @@ export default function Profile() {
       await AsyncStorage.removeItem("email");
       await AsyncStorage.setItem("onboardingCompleted", "false");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const handleChangeData = async () => {
     try {
@@ -69,6 +73,22 @@ export default function Profile() {
     setIsChecked(!isChecked);
   };
 
+  const togglePassword = () => {
+    setPasswordCheck(!passwordCheck);
+  };
+
+  const toggleNewsletter = () => {
+    setnewsLetterCheck(!newsLetterCheck);
+  };
+
+  const toggleOrderStatus = () => {
+    setOrderCheck(!orderCheck);
+  };
+
+  const toggleSpecialOffers = () => {
+    setSpecialOfferCheck(!specialOfferCheck);
+  };
+
   const setFirst = (value) => {
     setFirstName(value);
   };
@@ -85,8 +105,30 @@ export default function Profile() {
     setPhoneText(value);
   };
 
+  const saveAllChanges = async () => {
+    try {
+      await AsyncStorage.setItem("firstName", JSON.stringify({ firstName }));
+      await AsyncStorage.setItem("lastName", JSON.stringify({ lastName }));
+      await AsyncStorage.setItem("email", JSON.stringify({ email }));
+      await AsyncStorage.setItem(
+        "passwordCheck",
+        JSON.stringify({ passwordCheck })
+      );
+      await AsyncStorage.setItem("orderCheck", JSON.stringify({ orderCheck }));
+      await AsyncStorage.setItem(
+        "specialCheck",
+        JSON.stringify({ specialOfferCheck })
+      );
+      await AsyncStorage.setItem(
+        "newsLetterCheck",
+        JSON.stringify({ newsLetterCheck })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -99,34 +141,37 @@ export default function Profile() {
 
       if (!result.canceled) {
         setImage(result.assets[0].uri);
-        uri = result.assets[0].uri
-
+        uri = result.assets[0].uri;
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
-      const ur = JSON.stringify(uri)
-      saveImageToStorage(ur)
-      console.log('this is the image' + ur)
+      const ur = JSON.stringify(uri);
+      saveImageToStorage(ur);
+      console.log("this is the image" + ur);
     }
-
-
   };
 
   const saveImageToStorage = async (imageURL) => {
-    console.log('ok oooooo' + imageURL)
+    console.log("ok oooooo" + imageURL);
     try {
-      await AsyncStorage.setItem("avatarImage", imageURL)
-      console.log('saved image ok ok')
+      await AsyncStorage.setItem("avatarImage", imageURL);
+      console.log("saved image ok ok");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
+  };
+
+  function validatePhoneNumber(phoneNumber) {
+    const phoneRegex =
+      /^(?:\+?1[-.\s]?)?(?:\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$/;
+    return phoneRegex.test(phoneNumber);
   }
 
   const getUserData = async () => {
     try {
       const firstNameText = await AsyncStorage.getItem("firstName");
-      console.log('this is the first name' + firstNameText)
+      console.log("this is the first name" + firstNameText);
       let parsedFirst = JSON.parse(firstNameText);
       setFirstName(parsedFirst.firstName);
 
@@ -138,21 +183,25 @@ export default function Profile() {
       let parsedEmail = JSON.parse(emailText);
       setEmail(parsedEmail.emailText);
 
-      const imageUR = await AsyncStorage.getItem('avatarImage');
-      let parsedImage = JSON.parse(imageUR)
-      setImage(parsedImage)
+      const imageUR = await AsyncStorage.getItem("avatarImage");
+      let parsedImage = JSON.parse(imageUR);
+      setImage(parsedImage);
 
+      const passwordCheckS = await AsyncStorage.getItem("passwordCheck");
+      setPasswordCheck(JSON.parse(passwordCheckS));
+      console.log(passwordCheck);
+
+      const orderCheckS = await AsyncStorage.getItem("orderCheck");
+      setOrderCheck(JSON.parse(orderCheckS));
+
+      const specialCheckS = await AsyncStorage.getItem("specialCheck");
+      setSpecialOfferCheck(JSON.parse(specialCheckS));
+
+      const newsLetterCheckS = await AsyncStorage.getItem("newsLetterCheck");
+      setnewsLetterCheck(JSON.parse(newsLetterCheckS));
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const ImageButton = ({ onPress, imageSource, imageStyle }) => {
-    return (
-      <TouchableOpacity onPress={onPress} style={styles.button}>
-        <Image source={imageSource} style={[styles.buttonImage, imageStyle]} />
-      </TouchableOpacity>
-    );
   };
 
   useEffect(() => {
@@ -169,61 +218,81 @@ export default function Profile() {
         <InputTitleText text={"Avatar"} />
         <View style={styles.avatarRow}>
           <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center", }}
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             {image ? (
               <View style={{ alignItems: "center", justifyContent: "center" }}>
                 <Image
                   source={{ uri: image }}
-                  style={{ width: 80, height: 80, borderRadius: 40  }}
+                  style={{ width: 80, height: 80, borderRadius: 40 }}
                 />
               </View>
-            ): (
+            ) : (
               <View style={{ alignItems: "center", justifyContent: "center" }}>
-                {/* Placeholder view */}
                 <Text>No Image</Text>
               </View>
             )}
           </View>
           <View style={styles.greenButton}>
-            <Button
-              title="Change"
-              onPress={pickImage}
-              color={"#394C45"}
-            />
+            <Button title="Change" onPress={pickImage} color={"#394C45"} />
           </View>
           <View style={styles.greenButton}>
-            <Button
-              title="Remove"
-              onPress={removeImage}
-              color={"gray"}
-            />
+            <Button title="Remove" onPress={removeImage} color={"gray"} />
           </View>
         </View>
-        <InputTitleText text={"First Name"} />
-        <TextInput
-          style={styles.input}
-          onChangeText={setFirst}
-          value={firstName}
-        />
+        <View style={styles.avatarRow}>
+          <View>
+            <InputTitleText text={"First Name"} />
+            <TextInput
+              style={styles.input}
+              onChangeText={setFirst}
+              value={firstName}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <InputTitleText text={"Last Name"} />
+              <TextInput
+                style={styles.input}
+                onChangeText={setLast}
+                value={lastName}
+              />
+            </View>
+          </View>
+        </View>
       </View>
-      <View style={styles.item}>
-        <InputTitleText text={"Last Name"} />
-        <TextInput
-          style={styles.input}
-          onChangeText={setLast}
-          value={lastName}
-        />
+
+
+<View style={styles.avatarRow}>
+<View>
+        <View style={styles.item}>
+          <InputTitleText text={"Email"} />
+          <TextInput
+            style={styles.input}
+            onChangeText={setEmail}
+            value={email}
+          />
+        </View>
       </View>
-      <View style={styles.item}>
-        <InputTitleText text={"Email"} />
-        <TextInput style={styles.input} onChangeText={setEmail} value={email} />
+
+      <View>
+        <View style={styles.item}>
+          <InputTitleText text={"Phone Number"} />
+          <TextInput
+            style={styles.input}
+            onChangeText={setEmail}
+            value={email}
+          />
+        </View>
       </View>
+</View>
+
+
       <View style={styles.item}>
         <CheckBox
           title="Password Changes"
-          checked={isChecked}
-          onPress={toggleCheckBox}
+          checked={passwordCheck}
+          onPress={togglePassword}
           checkedColor="green"
           backgroundColor="white"
         />
@@ -231,8 +300,8 @@ export default function Profile() {
       <View style={styles.item}>
         <CheckBox
           title="Order Statuses"
-          checked={isChecked}
-          onPress={toggleCheckBox}
+          checked={orderCheck}
+          onPress={toggleOrderStatus}
           checkedColor="green"
           backgroundColor="white"
         />
@@ -240,8 +309,8 @@ export default function Profile() {
       <View style={styles.item}>
         <CheckBox
           title="Special Offers"
-          checked={isChecked}
-          onPress={toggleCheckBox}
+          checked={specialOfferCheck}
+          onPress={toggleSpecialOffers}
           checkedColor="green"
           backgroundColor="white"
         />
@@ -249,8 +318,8 @@ export default function Profile() {
       <View style={styles.item}>
         <CheckBox
           title="Newsletter"
-          checked={isChecked}
-          onPress={toggleCheckBox}
+          checked={newsLetterCheck}
+          onPress={toggleNewsletter}
           checkedColor="green"
           backgroundColor="white"
         />
@@ -264,7 +333,7 @@ export default function Profile() {
       <View style={styles.avatarRow}>
         <View style={styles.greenButton}>
           <Button
-            title="Change"
+            title="Save"
             onPress={console.log("tapped")}
             color={"#394C45"}
           />
@@ -280,23 +349,6 @@ export default function Profile() {
     </View>
   );
 }
-
-const FormTextInput = ({ title, onChangeText, value }) => {
-  return (
-    <TextInput style={styles.input} onChangeText={onChangeText} value={value} />
-  );
-};
-
-const IconButton = ({ onPress }) => {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{ flexDirection: "row", alignItems: "center" }}
-    >
-      <Ionicons name="arrow-back-circle" size={24} color="green" />
-    </TouchableOpacity>
-  );
-};
 
 const InputTitleText = ({ text }) => {
   return <Text style={styles.textInput}>{text}</Text>;
@@ -322,7 +374,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "gray",
     borderWidth: 1,
-    width: 200,
+    width: 160,
     paddingHorizontal: 10,
     marginStart: 8,
     borderRadius: 8,
@@ -330,6 +382,8 @@ const styles = StyleSheet.create({
 
   avatarRow: {
     flexDirection: "row",
+    backgroundColor: 'white',
+    marginBottom: 10,
   },
 
   container: {
