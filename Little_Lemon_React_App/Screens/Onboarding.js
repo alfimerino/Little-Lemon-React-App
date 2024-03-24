@@ -23,7 +23,10 @@ export default function Header() {
     // setFirstNameText(firstNameText)
     try {
       // Update AsyncStorage value to indicate that onboarding is completed
-      await AsyncStorage.setItem("firstName", JSON.stringify({ firstNameText }));
+      await AsyncStorage.setItem(
+        "firstName",
+        JSON.stringify({ firstNameText })
+      );
       await AsyncStorage.setItem("lastName", JSON.stringify({ lastName }));
       await AsyncStorage.setItem("email", JSON.stringify({ emailText }));
       await AsyncStorage.setItem("onboardingCompleted", "true");
@@ -56,12 +59,13 @@ export default function Header() {
 
           <TextInput
             style={styles.input}
-            type='text'
+            type="text"
             placeholder="Enter First Name"
             value={firstNameText}
             onChangeText={setFirstNameText}
           />
 
+          <Text style={styles.text}>Last Name</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter Last Name"
@@ -115,7 +119,7 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
-    flex: 0.9,
+    flex: 0.99,
     backgroundColor: "#A0A9B1",
     justifyContent: "center",
     alignItems: "center",
@@ -125,12 +129,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 200,
+    marginBottom: 200,
   },
 
   header: {
     height: 60,
     width: 400,
-    backgroundColor: "lightgray",
+    backgroundColor: "#EFEFEF",
     marginVertical: 20,
     resizeMode: "contain",
   },
@@ -154,6 +159,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     fontSize: 26,
     fontWeight: "600",
+    marginTop: 100,
   },
 
   submitButton: {

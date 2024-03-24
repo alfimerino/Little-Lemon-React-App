@@ -1,3 +1,4 @@
+import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import Header from "./Screens/Header";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Profile from "./Screens/Profile";
+import Home from "./Screens/Home";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +44,14 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Profile" component={Profile} />
+        {state.isOnboardingCompleted ? (
+          <React.Fragment>
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Profile" component={Profile} />
+          </React.Fragment>
+        ) : (
+          <Stack.Screen name="Onboarding" component={Onboarding} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -51,7 +60,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "top",
     paddingVertical: 60,
