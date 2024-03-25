@@ -17,6 +17,15 @@ import { CheckBox } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import { color } from "react-native-elements/dist/helpers";
 import axios from "axios";
+import * as FileSystem from "expo-file-system";
+import * as SQLite from "expo-sqlite";
+import { Asset } from "expo-asset";
+
+const db = SQLite.openDatabase(
+  { name: "LittleLemon.db", location: "default" },
+  () => console.log("Database opened successfully"),
+  (error) => console.log("Error opening DB" + error)
+);
 
 const url =
   "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -24,12 +33,68 @@ const url =
 export default function Home() {
   const [menuItems, getMenuItems] = useState([]);
   const [menuImages, getImages] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const storeMenuDataInDatabase = (menuData) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS menu (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price REAL)"
+      );
+
+      menuData.forEach((item) => {
+        tx.executeSql(
+          "INSERT INTO menu (name, description, price) VALUES (?, ?, ?)",
+          [item.name, item.description, item.price],
+          () => console.log("Menu item inserted successfully."),
+          (error) => console.error("Error inserting menu item:", error)
+        );
+      });
+    });
+    console.log("store success");
+  };
+
+  const loadMenuDataFromDatabase = () => {
+    let sqlQuery = "SELECT * FROM menu";
+    const params = [];
+
+    if (selectedCategory) {
+      sqlQuery += " WHERE category = ?";
+      params.push(selectedCategory);
+    }
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        sqlQuery,
+        params,
+        (tx, { rows }) => {
+          const menuData = [];
+          for (let i = 0; i < rows.length; i++) {
+            const item = rows.item(i);
+            menuData.push({
+              id: item.id,
+              name: item.name,
+              description: item.description,
+              price: item.price,
+            });
+          }
+          setMenuItems(menuData);
+        },
+        (error) =>
+          console.error("Error loading menu data from database:", error)
+      );
+    });
+  };
 
   const getAllMenuItems = async () => {
     try {
       const response = await axios.get(`${url}`);
       const allItems = response.data;
       // Assuming getMenuItems and getImages are functions to set state
+      storeMenuDataInDatabase(allItems.menu);
       getMenuItems(allItems.menu);
       console.log(menuItems[0]);
     } catch (error) {
@@ -39,25 +104,49 @@ export default function Home() {
 
   const getImage = async (image) => {
     try {
-      const imageURL = `https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/${image.image}?raw=true`
-      const response = await axios.get(url)
+      const imageURL = `https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/${image.image}?raw=true`;
+      const response = await axios.get(url);
     } catch (error) {
-      console.log('image error ' + error)
+      console.log("image error " + error);
     }
-  }
+  };
 
   useEffect(() => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "SELECT COUNT(*) AS count FROM menu",
+        [],
+        (tx, { rows }) => {
+          const count = rows.item(0).count;
+          if (count > 0) {
+            // Data exists in the database, load it
+            loadMenuDataFromDatabase();
+          } else {
+            // No data in the database, fetch from server
+            getAllMenuItems();
+          }
+        },
+        (error) => console.error("Error checking data in database:", error)
+      );
+    });
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS menu (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price TEXT)"
+      );
+    });
+
     getAllMenuItems();
-  }, []);
+  }, [selectedCategory]);
 
   const renderItem = ({ item }) => {
-    const imageURL = `https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/${item.image}?raw=true`
+    const imageURL = `https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/${item.image}?raw=true`;
     return (
       <View style={styles.menuItemContainer}>
         <Text>{item.name}</Text>
         <View style={styles.menuRow}>
-        <Text style={{ width: 250}}>{item.description}</Text>
-        <Image source={{uri: imageURL}} style={styles.menuImage}/>
+          <Text style={{ width: 250 }}>{item.description}</Text>
+          <Image source={{ uri: imageURL }} style={styles.menuImage} />
         </View>
         <Text>{item.price}</Text>
         <View style={styles.line}></View>
@@ -115,12 +204,6 @@ export default function Home() {
             />
           </View>
           <View style={styles.buttonContainerStyle}>
-            <Button
-              title="Drinks"
-              onPress={{}}
-              color={"lightgray"}
-              borderRadius={40}
-            />
           </View>
         </View>
         <View style={styles.line}></View>
@@ -236,7 +319,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     height: 80,
     width: 80,
-    marginLeft: 30
+    marginLeft: 30,
   },
 
   menuItemContainer: {
@@ -244,8 +327,7 @@ const styles = StyleSheet.create({
   },
 
   menuRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    
-  }
+    flexDirection: "row",
+    justifyContent: "flex-start",
+  },
 });
